@@ -99,7 +99,7 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -111,6 +111,7 @@ do
   -- You can also add relative line numbers, to help with jumping.
   --  Experiment for yourself to see if you like it!
   -- vim.o.relativenumber = true
+  vim.o.relativenumber = true
 
   -- Enable mouse mode, can be useful for resizing splits for example!
   vim.o.mouse = 'a'
@@ -146,6 +147,11 @@ do
   -- Configure how new splits should be opened
   vim.o.splitright = true
   vim.o.splitbelow = true
+
+  -- Configure spaces instead of tabs
+  vim.o.expandtab = true
+  vim.o.shiftwidth = 4
+  vim.o.tabstop = 4
 
   -- Sets how neovim will display certain whitespace characters in the editor.
   --  See `:help 'list'`
@@ -184,6 +190,9 @@ do
   -- Clear highlights on search when pressing <Esc> in normal mode
   --  See `:help hlsearch`
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+  -- Add easy explorer
+  vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`
@@ -485,6 +494,28 @@ do
   -- cursor location to LINE:COLUMN
   ---@diagnostic disable-next-line: duplicate-set-field
   statusline.section_location = function() return '%2l:%-2v' end
+
+  -- The ol mighty harpoon plugin
+  vim.pack.add({
+    gh("nvim-lua/plenary.nvim"), -- harpoon2 depends on plenary, must be loaded before it
+    { src=gh("ThePrimeagen/harpoon"), version="harpoon2" }
+  })
+
+  local harpoon = require("harpoon")
+
+  harpoon:setup()
+
+  vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+  vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+  vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+  vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
+  vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
+  vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
+
+  -- Toggle previous & next buffers stored within Harpoon list
+  vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+  vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
